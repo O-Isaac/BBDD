@@ -1,27 +1,26 @@
--- Muestra para cada departamento, su nombre, presupuesto y el nombre del centro al que pertenece
+-- Muestra para cada departamento, su nombre, presupuesto y el nombre del centro al que pertenece (Good)
 
 select d.NomDep, d.PreAnu, c.NomCen from departamento d
     inner join centro c on d.CodCen = c.CodCen;
 
--- Muestra para cada departamento, su nombre, presupuesto y el nombre del empleado que lo dirige.
+-- Muestra para cada departamento, su nombre, presupuesto y el nombre del empleado que lo dirige. (Good)
 
 select d.NomDep, d.PreAnu, e.NomEmp as Director from departamento d
     inner join empleado e on e.CodEmp = d.CodEmpDir;
 
--- Muestra para cada departamento, su nombre, presupuesto, el nombre del centro al que pertenece y el nombre del empleado que lo dirige.
+-- Muestra para cada departamento, su nombre, presupuesto, el nombre del centro al que pertenece y el nombre del empleado que lo dirige. (Good)
 
 select d.NomDep, d.PreAnu, c.NomCen, e.NomEmp from departamento d
     inner join centro c on d.CodCen = c.CodCen
     inner join empleado e on c.CodEmpDir = e.CodEmp;
 
-
--- Muestra el nombre del departamento, el nombre del centro al que pertenece y el nombre del empleado que lo dirige, de aquel departamento que tenga el presupuesto más alto.
+-- Muestra el nombre del departamento, el nombre del centro al que pertenece y el nombre del empleado que lo dirige, de aquel departamento que tenga el presupuesto más alto. (Good)
 
 select d.NomDep, MAX(d.PreAnu) as PreAnu, c.NomCen, e.NomEmp from departamento d
     inner join centro c on d.CodCen = c.CodCen
     inner join empleado e on c.CodEmpDir = e.CodEmp;
 
--- Listar los empleados del centro Fábrica Zona Sur.
+-- Listar los empleados del centro Fábrica Zona Sur. (Good)
 
 select c.NomCen, e.* from departamento d
     inner join empleado e on e.CodDep = d.CodDep
@@ -36,31 +35,44 @@ select e.NomEmp, h.NomHi, h.FecNaHi from empleado e
     order by h.FecNaHi desc;
 
 -- Usando los operadores de conjuntos, recupera:
---  1. el código de departamento para aquellos departamentos que tienen empleados.
+--  1. el código de departamento para aquellos departamentos que tienen empleados. (Maybe)
     
     select distinct d.CodDep from departamento d
         inner join empleado e ON d.CodDep = e.CodDep;
 
---  2. el código de departamento para aquellos departamentos que no tienen empleados.
+    select distinct e.CodDep from empleado e
+        where e.CodDep is not null;
 
-    select distinct d.CodDep, e.* from departamento d
+--  2. el código de departamento para aquellos departamentos que no tienen empleados. (Good)
+
+    select distinct d.CodDep from departamento d
         left join empleado e ON d.CodDep = e.CodDep
         where e.CodDep is null; 
 
---  3. los empleados que no son directivos de ningún departamento (no aparecen en departamento.CodEmpDir).
+    select distinct d.CodDep from departamento d 
+        where d.CodDep not in (SELECT distinct CodDep from empleado);
+
+--  3. los empleados que no son directivos de ningún departamento (no aparecen en departamento.CodEmpDir). (Good)
     
     select e.* from empleado e
         left join departamento d on d.CodEmpDir = e.CodEmp
         where CodEmpDir is null;
 
---  4. los empleados que no son directivos de ningún departamento ni de ningún centro
+    select NomEmp from empleado 
+        where CodEmp not in (Select CodEmpDir from departamento);
+
+--  4. los empleados que no son directivos de ningún departamento ni de ningún centro (Good)
     
     select e.* from empleado e
         left join departamento d on d.CodEmpDir = e.CodEmp
         left join centro c on d.CodCen = c.CodCen
         where c.CodEmpDir is null and d.CodEmpDir is null;
 
--- Recupera los empleados que trabajan en Oficinas Zona Sur y que tienen hijos.
+    select NomEmp from empleado 
+        where CodEmp not in (Select CodEmpDir from departamento)
+        and CodEmp not in (Select CodEmpDir from centro);
+
+-- Recupera los empleados que trabajan en Oficinas Zona Sur y que tienen hijos. (Good)
 
     select e.* from empleado e
         inner join departamento d on e.CodDep = d.CodDep

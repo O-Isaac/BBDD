@@ -13,3 +13,7 @@ select * from habilidad s
 
 select e.* from empleado e
     where e.NumHi = 0 and e.CodEmp not in (select CodEmp from hijo);
+
+
+select * from empleado e
+    left join hijo h on h.CodEmp = e.CodEmp;

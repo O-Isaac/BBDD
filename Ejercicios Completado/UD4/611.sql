@@ -5,15 +5,17 @@
 
 -- Muestra un listado de las habilidades que no tiene ningún empleado. (Aqui no entiendo la pregunta)
     
-    select s.* from habemp h
-        left join habilidad s on s.CodHab = h.CodHab
-        where h.CodEmp is null;
-
+    select DesHab from habilidad
+        where CodHab not in (select distinct CodHab from habemp);
+    
+    select DesHab from habilidad 
+        left join habemp on habemp.CodHab = habilidad.CodHab
+        where habemp.CodHab is null;
 
 -- Comprueba si los empleados que no tienen hijos (empleado.NumHi) coinciden con los empleados no tienen hijos relacionados (tabla hijo).
 
     select * from empleado 
-        where NumHi = 0 and CodEmp not in (select CodEmp from hijo);
+        where NumHi = 0 and CodEmp not in (select distinct CodEmp from hijo);
 
 -- Obtén el nombre del empleado y el nombre del hijo, si tuviese, para todos los empleados.
 

@@ -48,3 +48,20 @@ CREATE VIEW departamento_jerarquia AS
         dsup.`NomDep` as NomDepSup
     FROM departamento d
         LEFT JOIN departamento dsup on d.`CodDepDep` = dsup.`CodDep`
+
+-- Muestra para cada centro, además del presupuesto, el nombre de su director, edad y años en la empresa.
+
+SELECT cp.`CenPreAnu`, cp.`NomDir`, aa.`EdadEmp`, aa.`AntEmp` FROM centro_presupuesto cp
+    INNER JOIN empleado_anyos aa on cp.`NomDir` = aa.`NomEmp`
+
+-- Muestra para cada empleado, su código, nombre, cuantas habilidades tiene, y el nombre del departamento en el que trabaja y el nombre de su departamento superior.
+
+select 
+    eht.`CodEmp`, 
+    eht.`NomEmp`,
+    eht.`NomDep`,
+    dj.`NomDepSup`
+from empleado_habilidades_total eht
+    INNER JOIN departamento_jerarquia dj using (CodDep)
+
+-- Muestra para cada empleado, su código, nombre, cuantas habilidades tiene y una columna nivel que sea A si tiene 2 o más habilidades, B si tiene una habilidad y C si no tiene ninguna.

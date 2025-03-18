@@ -51,8 +51,8 @@ select
     CodDep,
     NomEmp,
     FecInEmp,
-    LEAD(FecInEmp) OVER (partition by CodDep ORDER BY FecInEmp DESC) as 'Fecha Siguiente',
+    LEAD(FecInEmp) OVER (partition by CodDep ORDER BY FecInEmp) as 'Fecha Siguiente',
     TIMESTAMPDIFF(DAY, LEAD(FecInEmp) OVER (partition by CodDep ORDER BY FecInEmp DESC), FecInEmp) as 'Dias Hasta Siguiente'
-from empleado;
-
+from empleado
+    ORDER BY CodDep, FecInEmp;
 
